@@ -29,11 +29,33 @@ class _HomeState extends State<Home> {
     //print("aberto: " + retorno.isOpen.toString());
   }
 
-  _salvar() async {}
+  _salvar() async {
+    Database bd = await _recuperarBancoDados();
+    Map<String, dynamic> dadosUsuario = {"nome": "Jose Roberto", "idade": 28};
+    int id = await bd.insert("usuarios", dadosUsuario);
+    print("Salvo: $id");
+  }
+
+  _listarUsuarios() async {
+    Database bd = await _recuperarBancoDados();
+    String sql = "SELECT * FROM usuarios ";
+    List usuarios = await bd.rawQuery(sql);
+
+    for (var usuario in usuarios) {
+      print("iitem id: " +
+          usuario['id'].toString() +
+          " nome: " +
+          usuario['nome'] +
+          " idade: " +
+          usuario['idade'].toString());
+    }
+    //print("usuarios: " + usuarios.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
-    _recuperarBancoDados();
+    //_salvar();
+    _listarUsuarios();
     return Container();
   }
 }
