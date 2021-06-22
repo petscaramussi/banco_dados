@@ -42,7 +42,13 @@ class _HomeState extends State<Home> {
     // "SELECT * FROM usuarios WHERE id = 5";
     // "SELECT * FROM usuarios WHERE idade >= 30 AND idade <= 58";
     // "SELECT * FROM usuarios WHERE idade BETWEEN 18 AND 46"
-    // "SELECT * FROM usuarios where idade IN (18,30)"
+    // "SELECT * FROM usuarios WHERE idade IN (18,30)"
+    // "SELECT * FROM usuarios WHERE nome LIKE 'Peterson Scaramussi'"
+    // "SELECT * FROM usuarios WHERE nome LIKE 'Peterson%'"
+    // "SELECT * FROM usuarios WHERE 1=1 ORDER BY nome ASC" ASC ou DESC
+    // "SELECT * FROM usuarios WHERE 1=1 ORDER BY idade DESC"
+    // "SELECT * FROM usuarios WHERE 1=1 ORDER BY idade DESC LIMIT 3"
+
     List usuarios = await bd.rawQuery(sql);
 
     for (var usuario in usuarios) {
@@ -56,9 +62,47 @@ class _HomeState extends State<Home> {
     //print("usuarios: " + usuarios.toString());
   }
 
+  _listarUsuarioPeloId(int id) async {
+    Database bd = await _recuperarBancoDados();
+    //CRUD -> Create, Read, Update and Delete
+    List usuarios = await bd.query("usuarios",
+        columns: ["id", "nome", "idade"], where: "id = ? ", whereArgs: [id]);
+
+    for (var usuario in usuarios) {
+      print("iitem id: " +
+          usuario['id'].toString() +
+          " nome: " +
+          usuario['nome'] +
+          " idade: " +
+          usuario['idade'].toString());
+    }
+  }
+
+  _excluirUsuario(int id) async {
+    Database bd = await _recuperarBancoDados();
+
+    int retorno = await bd.delete("usuarios", where: "id = ?", whereArgs: [id]);
+
+    print("item qtde removida:  $retorno");
+  }
+
+  _atualizarUsuario(int id) async {
+    Database bd = await _recuperarBancoDados();
+
+    Map<String, dynamic> dadosUsuario = {"nome": "José", "idade": 67};
+
+    int retorno = await bd
+        .update("usuarios", dadosUsuario, where: "id = ?", whereArgs: [id]);
+
+    print("item qtde atualizada: $retorno");
+  }
+
   @override
   Widget build(BuildContext context) {
     //_salvar();
+    //_excluirUsuario(5);
+    // _listarUsuarioPeloId(1);
+    _atualizarUsuario(3);
     _listarUsuarios();
     return Container();
   }
